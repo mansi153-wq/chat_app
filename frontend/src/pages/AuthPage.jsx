@@ -48,7 +48,7 @@ export default function AuthPage() {
               </defs>
             </svg>
           </div>
-          <span className="auth-logo-text">Drift</span>
+          <span className="auth-logo-text">linkup</span>
         </div>
 
         <h1 className="auth-title">
