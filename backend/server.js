@@ -38,6 +38,10 @@ app.get("/", (req, res) => {
   res.json({ success: true, message: "Chat API Running 🚀" });
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // Socket.io
 const onlineUsers = new Map(); // userId -> socketId
 
