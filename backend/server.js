@@ -1,5 +1,7 @@
+const db = require("./db");
 require("dotenv").config();
-
+console.log("DB_HOST =", process.env.DB_HOST);
+console.log("DB_USER =", process.env.DB_USER);
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
@@ -81,16 +83,26 @@ io.on("connection", (socket) => {
   });
 
   // Disconnect
-  socket.on("disconnect", () => {
-    for (const [userId, socketId] of onlineUsers.entries()) {
-      if (socketId === socket.id) {
-        onlineUsers.delete(userId);
-        break;
-      }
+socket.on("disconnect", () => {
+  for (const [userId, socketId] of onlineUsers.entries()) {
+    if (socketId === socket.id) {
+
+      db.query(
+        "UPDATE users SET last_seen = NOW() WHERE id = ?",
+        [userId],
+        (err) => {
+          if (err) console.error("Failed to update last_seen:", err);
+        }
+      );
+
+      onlineUsers.delete(userId);
+      break;
     }
-    io.emit("online_users", Array.from(onlineUsers.keys()));
-    console.log("❌ Socket disconnected:", socket.id);
-  });
+  }
+
+  io.emit("online_users", Array.from(onlineUsers.keys()));
+  console.log("❌ Socket disconnected:", socket.id);
+});
 });
 
 const PORT = process.env.PORT || 5000;
