@@ -12,13 +12,21 @@ const API_BASE = process.env.REACT_APP_API_URL?.replace("/api", "") || "http://l
 function Avatar({ name, src, size = 36, online = false, onClick }) {
   const colors = ["#6366f1","#8b5cf6","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444"];
   const color = colors[(name?.charCodeAt(0) || 0) % colors.length];
-  const imgSrc = src?.startsWith("/uploads") ? `${API_BASE}${src}` : src;
+  // Handle relative upload paths, full URLs, or blob preview URLs
+  const imgSrc = src
+    ? (src.startsWith("http") || src.startsWith("blob:") ? src : `${API_BASE}${src}`)
+    : null;
   return (
-    <div className="avatar-wrap" style={{ width: size, height: size }} onClick={onClick}>
+    <div className="avatar-wrap" style={{ width: size, height: size, cursor: onClick ? "pointer" : "default" }} onClick={onClick}>
       {imgSrc
-        ? <img className="avatar avatar-img" src={imgSrc} alt={name} style={{ width: size, height: size }} />
-        : <div className="avatar" style={{ background: color, width: size, height: size, fontSize: size * 0.4 }}>{name?.[0]?.toUpperCase()}</div>
+        ? <img className="avatar avatar-img" src={imgSrc} alt={name} style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover" }}
+            onError={e => { e.target.style.display = "none"; e.target.nextSibling && (e.target.nextSibling.style.display = "flex"); }}
+          />
+        : null
       }
+      <div className="avatar" style={{ background: color, width: size, height: size, fontSize: size * 0.4, display: imgSrc ? "none" : "flex" }}>
+        {name?.[0]?.toUpperCase()}
+      </div>
       {online && <span className="avatar-dot" />}
     </div>
   );
@@ -613,9 +621,9 @@ export default function ChatPage() {
                 ) : (
                   <div key={item.id} className={`message-row-wrap ${item.sender_id === user.id ? "mine" : "theirs"}`}>
                     {item.sender_id !== user.id && (
-                      <Avatar name={item.sender_username} size={28} />
+                      <Avatar name={item.sender_username} src={item.sender_avatar} size={28} />
                     )}
-                    <div style={{display:"flex",flexDirection:"column",flex:1,alignItems: item.sender_id === user.id ? "flex-end" : "flex-start"}}>
+                    <div style={{display:"flex",flexDirection:"column",maxWidth:"65%",alignItems: item.sender_id === user.id ? "flex-end" : "flex-start"}}>
                       {activeConv.is_group && item.sender_id !== user.id && (
                         <div className="group-sender-name">{item.sender_username}</div>
                       )}

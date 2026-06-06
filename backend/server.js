@@ -30,6 +30,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Serve uploaded files
+const path = require("path");
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
@@ -80,6 +84,21 @@ io.on("connection", (socket) => {
 
   socket.on("stop_typing", ({ conversationId, userId }) => {
     socket.to(`conversation_${conversationId}`).emit("user_stop_typing", { userId });
+  });
+
+  // Reactions
+  socket.on("react_message", ({ messageId, reactions, conversationId }) => {
+    socket.to(`conversation_${conversationId}`).emit("reaction_updated", { messageId, reactions });
+  });
+
+  // Message deleted
+  socket.on("message_deleted", ({ messageId, conversationId }) => {
+    socket.to(`conversation_${conversationId}`).emit("message_deleted", { messageId });
+  });
+
+  // Messages read
+  socket.on("messages_read", ({ conversationId, userId, messageIds }) => {
+    socket.to(`conversation_${conversationId}`).emit("messages_read", { userId, messageIds });
   });
 
   // Disconnect

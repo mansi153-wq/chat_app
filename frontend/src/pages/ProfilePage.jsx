@@ -3,8 +3,10 @@ import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
 import "../styles/profile.css";
 
+const API_BASE = process.env.REACT_APP_API_URL?.replace("/api", "") || "http://localhost:5000";
+
 export default function ProfilePage({ userId, onClose, onLogout }) {
-  const { user: me, login } = useAuth();
+  const { user: me, updateUser } = useAuth();
   const isOwnProfile = !userId || userId === me?.id;
 
   const [profile, setProfile] = useState(null);
@@ -54,6 +56,9 @@ export default function ProfilePage({ userId, onClose, onLogout }) {
       setProfile(res.data.user);
       setEditing(false);
       setAvatarFile(null);
+      setAvatarPreview(null);
+      // Sync updated user into AuthContext so sidebar/header reflects changes
+      updateUser(res.data.user);
       setSaveMsg("Profile updated ✓");
       setTimeout(() => setSaveMsg(""), 2500);
     } catch (e) {
@@ -66,7 +71,10 @@ export default function ProfilePage({ userId, onClose, onLogout }) {
   const avatarColors = ["#6366f1","#8b5cf6","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444"];
   const avatarColor = avatarColors[((profile?.username || "").charCodeAt(0) || 0) % avatarColors.length];
 
-  const displayAvatar = avatarPreview || profile?.avatar;
+  const displayAvatar = avatarPreview
+    || (profile?.avatar
+        ? (profile.avatar.startsWith("http") ? profile.avatar : `${API_BASE}${profile.avatar}`)
+        : null);
   const initials = (profile?.username || "?")[0].toUpperCase();
 
   const joinedDate = profile?.created_at

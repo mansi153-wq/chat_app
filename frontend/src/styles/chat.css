@@ -156,6 +156,11 @@ body {
   font-family: 'Syne', sans-serif;
   flex-shrink: 0;
 }
+.avatar-img {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
 .avatar-dot {
   position: absolute;
   bottom: 0; right: 0;
@@ -272,6 +277,15 @@ body {
 
 .message-row.mine { flex-direction: row-reverse; }
 
+/* message-row-wrap is the outer row used in the grouped rendering */
+.message-row-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 2px 0;
+}
+.message-row-wrap.mine { flex-direction: row-reverse; }
+
 .bubble-wrap { display: flex; flex-direction: column; max-width: 65%; }
 .message-row.mine .bubble-wrap { align-items: flex-end; }
 
@@ -281,6 +295,9 @@ body {
   font-size: 14px;
   line-height: 1.5;
   word-break: break-word;
+  /* Shrink to content, never stretch */
+  display: inline-block;
+  max-width: 100%;
 }
 .message-row.theirs .bubble {
   background: rgba(255,255,255,0.08);
@@ -415,15 +432,17 @@ body {
 }
 
 /* Message row wrap (for group sender name) */
-.message-row-wrap {
-  display: flex; align-items: flex-end; gap: 8px; margin: 2px 0;
-}
-.message-row-wrap.mine { flex-direction: row-reverse; }
 .group-sender-name { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 2px; padding: 0 4px; }
 
 /* Message actions (react + delete) */
-.bubble-outer { position: relative; max-width: 65%; }
-.message-row.mine .bubble-outer { align-items: flex-end; }
+.bubble-outer {
+  position: relative;
+  max-width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+}
+.message-row.mine .bubble-outer,
+.message-row-wrap.mine .bubble-outer { align-items: flex-end; }
 
 .msg-actions {
   position: absolute; top: -28px; display: none;
