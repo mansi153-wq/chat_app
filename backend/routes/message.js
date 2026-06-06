@@ -63,6 +63,15 @@ router.get("/:conversation_id", authMiddleware, (req, res) => {
       if (err) return res.status(500).json({ success: false, message: err.message });
       if (result.length === 0) return res.status(403).json({ success: false, message: "Access denied" });
 
+      // Mark messages from the other user as read
+      db.query(
+        `UPDATE messages
+         SET is_read = TRUE
+         WHERE conversation_id = ?
+         AND sender_id != ?`,
+        [conversation_id, userId]
+      );
+
       db.query(
         `SELECT m.id, m.conversation_id, m.sender_id, m.content, m.created_at,
                 u.username AS sender_username, u.avatar AS sender_avatar
