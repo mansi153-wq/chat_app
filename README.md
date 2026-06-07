@@ -4,6 +4,9 @@ A full-stack real-time chat application built with React, Node.js/Express, MySQL
 
 **Live stack:** Vercel (frontend) · Render (backend) · Aiven (MySQL)
 
+![Drift Architecture](Screenshots/1.png)
+
+
 ---
 
 ## Features
