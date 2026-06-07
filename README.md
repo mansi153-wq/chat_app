@@ -49,6 +49,9 @@ A full-stack real-time chat application built with React, Node.js/Express, MySQL
 - **Custom scrollbar** — Minimal styled scrollbar in the message area
 
 ---
+## Project Architecture
+![Drift Architecture](Architecture.png)
+
 
 ## Tech Stack
 
