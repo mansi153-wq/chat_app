@@ -8,19 +8,75 @@ A full-stack real-time chat application built with React, Node.js/Express, MySQL
 
 ## Features
 
-- **Auth** — Register & login with JWT
-- **Real-time messaging** — Socket.IO powered instant chat
-- **Group chats** — Create group conversations
-- **User search** — Find users by username or email
-- **Online presence** — See who's online live
-- **Typing indicators** — Know when someone is typing
-- **Reactions** — React to messages with emojis
-- **Read receipts** — See when messages are read
-- **File & image sharing** — Send photos and files
-- **Message deletion** — Delete your own messages
-- **Profile editing** — Update avatar, username, and bio
-- **Conversation history** — Messages persist in MySQL
-- **Mobile responsive** — Works on all screen sizes
+### 💬 Messaging
+- **Real-time messaging** — Instant chat powered by Socket.IO, no refresh needed
+- **Direct messages** — One-on-one private conversations
+- **Group chats** — Create group conversations with multiple members
+- **Message deletion** — Delete your own messages, shows "deleted" placeholder for others
+- **Optimistic UI** — Messages appear instantly before server confirmation
+
+### 🔔 Live Interaction
+- **Typing indicators** — See a live animation when someone is typing
+- **Online presence** — Green dot shows who's currently online
+- **Read receipts** — Single ✓ for delivered, double ✓✓ when the other person has read it
+- **Emoji reactions** — React to any message with 6 emoji options, toggle to remove
+- **Reaction pop animation** — Emoji floats up when you react
+
+### 📁 Media & Files
+- **Image sharing** — Send photos directly in chat, click to open full size
+- **File sharing** — Share PDFs, docs, and other files with a download link
+- **Avatar upload** — Set a profile picture, stored and served from the backend
+
+### 🔐 Auth & Security
+- **JWT authentication** — Secure token-based login and registration
+- **Protected routes** — All API endpoints require a valid token
+- **Password hashing** — Passwords stored securely with bcrypt
+
+### 🔍 Search & Navigation
+- **User search** — Find any user by username or email to start a conversation
+- **In-chat search** — Search through messages within a conversation
+- **Conversation list** — Sorted by latest message with preview and timestamp
+
+### 👤 Profiles
+- **Profile page** — View your own or another user's profile
+- **Editable profile** — Update your username, bio, and avatar in one place
+- **Join date** — Shows when the account was created
+
+### 📱 UI & Experience
+- **Dark theme** — Sleek dark UI with a purple accent palette
+- **Mobile responsive** — Fully usable on phones with slide-in sidebar
+- **Smooth animations** — Messages animate in, modals scale in, reactions pop
+- **Custom scrollbar** — Minimal styled scrollbar in the message area
+
+---
+
+## Tech Stack
+
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| React 18 | UI framework |
+| React Context API | Auth and socket state management |
+| Socket.IO Client | Real-time communication |
+| Axios | HTTP requests |
+| CSS (vanilla) | Styling — no UI library, fully custom |
+
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| Node.js + Express | REST API server |
+| Socket.IO | WebSocket server for real-time events |
+| MySQL2 | Database driver |
+| JWT (jsonwebtoken) | Authentication tokens |
+| bcrypt | Password hashing |
+| Multer | File and avatar uploads |
+
+### Infrastructure
+| Service | Role |
+|---------|------|
+| [Vercel](https://vercel.com) | Frontend hosting (CDN + auto-deploy) |
+| [Render](https://render.com) | Backend hosting (Node.js web service) |
+| [Aiven](https://aiven.io) | Managed MySQL database with SSL |
 
 ---
 
@@ -240,3 +296,32 @@ npm start              # starts on :3000
 | `reaction_updated` | Server → Client | Reaction changed |
 | `message_deleted` | Client ↔ Server | Message was deleted |
 | `messages_read` | Client ↔ Server | Messages marked as read |
+
+---
+
+## Limitations
+
+- **File storage is ephemeral on Render** — uploaded files (avatars, images) are stored on the server's local disk. Render's free tier does not persist the filesystem between deploys, so files will be lost on redeploy. A proper solution would be to use cloud storage (e.g. AWS S3 or Cloudinary).
+- **Render free tier cold starts** — the backend spins down after ~15 minutes of inactivity. The first request after sleep can take 20–30 seconds to respond.
+- **No message pagination UI** — the API supports pagination but the frontend always loads the latest 50 messages with no "load more" button.
+- **No push notifications** — notifications only appear while the app is open in the browser.
+- **Group chat limitations** — no admin roles, no ability to add/remove members after creation, and no group avatar support.
+- **No email verification** — users can register with any email without verification.
+- **Single server Socket.IO** — the socket server is not horizontally scalable. Running multiple backend instances would require a Redis adapter for Socket.IO.
+
+---
+
+## Future Enhancements
+
+- [ ] **Cloud file storage** — migrate uploads to AWS S3 or Cloudinary so files persist across deploys
+- [ ] **Message pagination** — "load older messages" button or infinite scroll upward
+- [ ] **Push notifications** — browser push notifications for new messages when the tab is not focused
+- [ ] **Voice messages** — record and send audio clips directly in chat
+- [ ] **Message editing** — allow editing sent messages with an "edited" label
+- [ ] **Group management** — add/remove members, assign admin roles, set group avatar
+- [ ] **Last seen** — show "last seen X minutes ago" for offline users
+- [ ] **Message forwarding** — forward a message to another conversation
+- [ ] **Link previews** — auto-generate previews for URLs shared in messages
+- [ ] **Email verification** — verify email on register and support password reset via email
+- [ ] **End-to-end encryption** — encrypt messages client-side for private conversations
+- [ ] **Redis adapter** — add Socket.IO Redis adapter to support horizontal backend scaling
